@@ -48,10 +48,11 @@
   /* one currency per line; the amount boxes stretch to fill the screen width */
   .row{display:flex;align-items:center;gap:6px;flex-wrap:nowrap;overflow-x:auto;padding:11px 0;border-bottom:1px dashed var(--field-border);}
   .fld{display:flex;flex-direction:row;align-items:center;gap:6px;flex:1 1 0;min-width:0;}
-  .fld label{font-size:13px;font-weight:700;color:var(--muted);letter-spacing:.3px;white-space:nowrap;flex:0 0 auto;}
-  .fld input{font-size:17px;padding:9px 8px;border:1px solid var(--field-border);border-radius:4px;background:var(--field);color:var(--ink);
-             flex:1 1 auto;width:auto;min-width:0;max-width:240px;text-align:right;}
-  .swap{font-size:17px;color:var(--gold);user-select:none;flex:0 0 auto;}
+  .fld label{font-size:14px;font-weight:700;color:var(--muted);letter-spacing:.3px;white-space:nowrap;flex:0 0 auto;}
+  /* large text in the amount boxes - roughly double the old size */
+  .fld input{font-size:30px;line-height:1.1;padding:8px 7px;border:1px solid var(--field-border);border-radius:4px;background:var(--field);color:var(--ink);
+             flex:1 1 auto;width:auto;min-width:0;max-width:260px;text-align:right;}
+  .swap{font-size:19px;color:var(--gold);user-select:none;flex:0 0 auto;}
   /* narrow selector box - the native dropdown still shows full currency names when tapped */
   .fld select{font-size:13px;padding:8px 4px;border:1px solid var(--field-border);border-radius:4px;background:var(--field);color:var(--ink);
               width:64px;flex:0 0 64px;min-width:0;}
@@ -65,9 +66,21 @@
     .status{padding:8px 8px;}
     .row{gap:5px;}
     .fld{gap:5px;}
-    .fld select{width:58px;flex-basis:58px;}
+    .fld input{font-size:28px;padding:7px 6px;}
+    .row-sel .fld input{font-size:21px;}
+    .fld select{width:56px;flex-basis:56px;}
   }
   .voice{margin-top:16px;padding:14px;border:2px solid var(--gold-line);border-radius:6px;background:var(--field);}
+  .common{margin-top:14px;padding:12px 14px;border:2px solid var(--gold-line);border-radius:6px;background:var(--field);}
+  .common-title{font-weight:700;font-size:13px;letter-spacing:.3px;color:var(--muted);text-transform:uppercase;margin-bottom:8px;}
+  .common-list{display:grid;grid-auto-flow:column;grid-template-rows:repeat(4,auto);grid-template-columns:1fr 1fr;gap:6px 14px;}
+  .common-list div{font-size:14px;white-space:nowrap;}
+  .common-list .amt{color:var(--muted);}
+  .common-list .res{font-weight:700;}
+  @media (max-width:520px){
+    .common-list{gap:5px 8px;}
+    .common-list div{font-size:12.5px;}
+  }
   #listenBtn{font-size:16px;padding:10px 18px;border-radius:6px;border:2px solid var(--gold-line);background:var(--gold);color:#1c1c1c;font-weight:700;cursor:pointer;}
   #listenBtn.listening{animation:pulse 1s infinite;}
   @keyframes pulse{50%{opacity:.5;}}
@@ -90,7 +103,7 @@
       <text x="32" y="34" font-family="Georgia,serif" font-size="44" font-weight="bold" fill="#E8B200" text-anchor="middle" dominant-baseline="central">$</text>
     </svg>
     <h1>DSR Currency</h1>
-    <span class="version">Version 1b</span>
+    <span class="version">Version 1d</span>
   </div>
   <div class="status" id="status">Loading exchange rates&hellip;</div>
   <main>
@@ -105,6 +118,11 @@
         &nbsp;&bull;&nbsp; &ldquo;2 lakh rupees to dollars&rdquo; &nbsp;&bull;&nbsp; &ldquo;100 pounds to aud&rdquo;.<br>
         Voice needs Chrome or Edge, a microphone, and an internet connection.
       </div>
+    </div>
+
+    <div class="common">
+      <div class="common-title">Common Currency Amounts</div>
+      <div id="commonList" class="common-list"></div>
     </div>
 
     <div class="tools">
@@ -210,7 +228,7 @@ let selectEl;
 
 function makeRow(targetCode, selectable){
   const row = document.createElement('div');
-  row.className = 'row';
+  row.className = selectable ? 'row row-sel' : 'row';
 
   const audFld = document.createElement('div');
   audFld.className = 'fld';
@@ -347,7 +365,32 @@ async function fetchRates(){
   setStatus();
   return false;
 }
-function recalcAll(){ rowEls.forEach(r => r._recalc && r._recalc()); }
+function recalcAll(){ rowEls.forEach(r => r._recalc && r._recalc()); renderCommon(); }
+
+/* ---------- common currency amounts (quick reference, live) ---------- */
+/* left column then right column (grid fills column-first) */
+const COMMON = [
+  [500,   'INR', 'AUD'],
+  [2000,  'INR', 'AUD'],
+  [5000,  'INR', 'AUD'],
+  [25000, 'INR', 'AUD'],
+  [5,     'GBP', 'AUD'],
+  [10,    'GBP', 'AUD'],
+  [20,    'GBP', 'AUD'],
+  [50,    'GBP', 'AUD']
+];
+function renderCommon(){
+  const el = $('#commonList');
+  if (!el) return;
+  el.innerHTML = '';
+  COMMON.forEach(([amt, from, to]) => {
+    const v = convert(amt, from, to);
+    const d = document.createElement('div');
+    d.innerHTML = '<span class="amt">' + fmt(amt) + ' ' + from + ' = </span>' +
+                  '<span class="res">' + (v == null ? '—' : fmt(v) + ' ' + to) + '</span>';
+    el.appendChild(d);
+  });
+}
 
 /* ---------- manual rate editor ---------- */
 function buildEditor(){
