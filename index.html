@@ -45,26 +45,27 @@
   .status{padding:8px 20px;font-size:12.5px;color:var(--muted);border-bottom:1px solid var(--field-border);}
   .status.warn{color:var(--warn);}
   main{padding:14px 20px 0;}
-  /* one currency per line - stays on a single row even on a narrow phone */
-  .row{display:flex;align-items:center;gap:5px;flex-wrap:nowrap;overflow-x:auto;padding:11px 0;border-bottom:1px dashed var(--field-border);}
-  .fld{display:flex;flex-direction:row;align-items:center;gap:4px;flex:0 1 auto;min-width:0;}
-  .fld label{font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.3px;white-space:nowrap;}
-  .fld input{font-size:16px;padding:7px 6px;border:1px solid var(--field-border);border-radius:4px;background:var(--field);color:var(--ink);
-             width:82px;flex:0 0 82px;text-align:right;min-width:0;}
-  .swap{font-size:16px;color:var(--gold);user-select:none;flex:0 0 auto;}
+  /* one currency per line; the amount boxes stretch to fill the screen width */
+  .row{display:flex;align-items:center;gap:6px;flex-wrap:nowrap;overflow-x:auto;padding:11px 0;border-bottom:1px dashed var(--field-border);}
+  .fld{display:flex;flex-direction:row;align-items:center;gap:6px;flex:1 1 0;min-width:0;}
+  .fld label{font-size:13px;font-weight:700;color:var(--muted);letter-spacing:.3px;white-space:nowrap;flex:0 0 auto;}
+  .fld input{font-size:17px;padding:9px 8px;border:1px solid var(--field-border);border-radius:4px;background:var(--field);color:var(--ink);
+             flex:1 1 auto;width:auto;min-width:0;max-width:240px;text-align:right;}
+  .swap{font-size:17px;color:var(--gold);user-select:none;flex:0 0 auto;}
   /* narrow selector box - the native dropdown still shows full currency names when tapped */
-  .fld select{font-size:13px;padding:6px 3px;border:1px solid var(--field-border);border-radius:4px;background:var(--field);color:var(--ink);
-              width:66px;flex:0 0 66px;min-width:0;}
-  .rowspeak{background:none;border:1px solid var(--field-border);border-radius:4px;padding:5px 7px;cursor:pointer;color:var(--ink);font-size:13px;flex:0 0 auto;}
+  .fld select{font-size:13px;padding:8px 4px;border:1px solid var(--field-border);border-radius:4px;background:var(--field);color:var(--ink);
+              width:64px;flex:0 0 64px;min-width:0;}
+  .rowspeak{background:none;border:1px solid var(--field-border);border-radius:4px;padding:7px 8px;cursor:pointer;color:var(--ink);font-size:14px;flex:0 0 auto;}
   @media (max-width:520px){
-    body{padding:8px;}
-    main{padding:10px 10px 0;}
+    body{padding:6px;}
+    main{padding:10px 8px 0;}
     .banner{padding:12px;}
     .banner h1{font-size:19px;}
     .version{right:10px;}
-    .status{padding:8px 10px;}
-    .fld input{width:72px;flex-basis:72px;}
-    .fld select{width:60px;flex-basis:60px;}
+    .status{padding:8px 8px;}
+    .row{gap:5px;}
+    .fld{gap:5px;}
+    .fld select{width:58px;flex-basis:58px;}
   }
   .voice{margin-top:16px;padding:14px;border:2px solid var(--gold-line);border-radius:6px;background:var(--field);}
   #listenBtn{font-size:16px;padding:10px 18px;border-radius:6px;border:2px solid var(--gold-line);background:var(--gold);color:#1c1c1c;font-weight:700;cursor:pointer;}
